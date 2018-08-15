@@ -1,0 +1,71 @@
+﻿@using System.Configuration;
+@{
+    var hostapp = ConfigurationManager.AppSettings["HostAPP"].ToString();
+}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="~/img/CheckPoint.ico" rel="shortcut icon" type="image/x-icon" />
+    <title>
+        NoAccessRight
+    </title>
+    <style>
+        html, body {
+            height: 100%;
+        }
+
+        #centeredcontent {
+            width: 800px;
+            height: 500px;
+            text-align: left;
+            background: url(../../@hostapp/img/error.png) no-repeat;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-left: -400px;
+            margin-top: -250px;
+        }
+
+        .contentBox1 {
+            width: 640px;
+            margin: 20px 0 0 145px;
+            font: normal 18px/120% Georgia;
+            color: #fff;
+        }
+
+            .contentBox1 h1 {
+                font: italic bold 38px/100% Georgia;
+                margin: 0 0 10px 0;
+            }
+
+            .contentBox1 h2 {
+                font: italic bold 27px/100% Georgia;
+                margin: 0 0 20px 0;
+            }
+
+        .contentBox2 {
+            width: 298px;
+            margin: 65px 0 0 210px;
+            font: normal 16px/120% Arial;
+            color: #fff;
+        }
+
+        .contentBox1 a {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div id="centeredcontent">
+        <div class="contentBox1">
+            <h1>Sorry,</h1>
+            <h2>No Access Right.</h2>
+        </div>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+    </div>
+</body>
+</html>
+
+

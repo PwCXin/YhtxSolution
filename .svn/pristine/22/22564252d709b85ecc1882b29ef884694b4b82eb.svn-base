@@ -1,0 +1,27 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+using Yhtx.DAO.EFBase;
+using Yhtx.EntityModel;
+using Yhtx.EntityModel.Base;
+using Yhtx.EntityModel.QueryArgs;
+namespace Yhtx.DAO
+{
+   public class UnitOperate : EFOperate<T_UNIT>
+    {
+        public override int Add(T_UNIT model)
+        {
+            context.T_UNIT.Add(model);
+            result = context.SaveChanges();
+            return result;
+        }
+        public List<T_UNIT> GetListAll()
+        {
+            List<T_UNIT> list = context.T_UNIT.ToList();
+            return list;
+        }
+    }
+}

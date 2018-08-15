@@ -1,0 +1,47 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using ViewModel.UserVM;
+using Yhtx.EntityModel;
+using Yhtx.EntityModel.QueryArgs;
+using Yhtx.ViewModel;
+using Yhtx.ViewModel.UserVM;
+
+namespace YhtxWeb.Controllers
+{
+    public class PersonController : Controller
+    {
+        UserVM userVM = new UserVM();
+        UnitVM unitVM = new UnitVM();
+        RoleVM roleVM = new RoleVM();
+        CateGoryVM cateGory = new CateGoryVM();
+        // GET: Person
+        public ActionResult Query()
+        {
+            return View();
+        }
+        public JsonResult QueryList(int pageIndex, int pageSize)
+        {
+            UserArgs userArgs = new UserArgs();
+            var list = userVM.QueryList(pageIndex, pageSize, true, userArgs);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetUnitAll()
+        {
+            List<T_UNIT> list = unitVM.GetListAll();
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetRoleAll()
+        {
+            List<T_ROLE> list = roleVM.GetListAll();
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetCateGoryByScope(string scope)
+        {
+            List<T_CATEGORY> list = cateGory.GetCateGoryByScope(scope);
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+    }
+}

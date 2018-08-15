@@ -1,0 +1,35 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
+using System.Threading.Tasks;
+using Yhtx.DAO;
+using Yhtx.DAO.User;
+using Yhtx.EntityModel;
+using Yhtx.EntityModel.Base;
+using Yhtx.EntityModel.QueryArgs;
+
+
+namespace ViewModel.UserVM
+{
+    public class UserVM
+    {
+        UserOperate _UserOperate;
+        public UserVM()
+        {
+            _UserOperate = new UserOperate();
+        }
+        public T_PERSON GetLoginInfo(string userId, string pwd)
+        {
+            T_PERSON _PERSON = _UserOperate.LoginInfo(userId, pwd);
+            return _PERSON;
+        }
+
+        public Page<T_PERSON> QueryList(int pageIndex, int pageSize, bool isAsc, UserArgs args)
+        {
+            return _UserOperate.QueryList(pageIndex, pageSize, isAsc, args);
+        }
+
+    }
+}

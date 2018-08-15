@@ -1,0 +1,255 @@
+﻿
+@{
+    ViewBag.Title = "Query";
+}
+
+@section link{
+
+}
+
+@section scripts{
+
+    <script src="~/Scripts/axios.min.js"></script>
+    <script src="~/Scripts/commonUtils.js"></script>
+    <script>
+       var user = {};
+       new Vue({
+           el: '#app',
+           data: {
+               user: user,
+               pageNo: 1,
+               pageSize: 10,
+               pageSizesList: [10, 15, 20, 30, 50],
+               tableData: [],//table显示数据
+               totalDataNumber: 0,//分页显示数
+               UserAdd: {
+                   S_NAME: '',
+                   S_PASSWORD: '',
+                   S_UNIT: '',
+                   S_UNITNAME: '',
+                   S_DESCRIPTION: '',
+                   S_SEX: '',
+                   S_IDENTIFICATION: '',
+                   S_DUTY: '',
+                   S_TEL: '',
+                   S_PHONE: '',
+                   S_EMAIL: '',
+                   S_POLICENUM: '',
+                   S_CATEGORY: '',
+               },
+               formLabelWidth: '120px',
+               dialogTableVisible: false,
+               dialogFormVisible: false,
+               UnitList: [],
+               roleList :[],
+               dutyList : []
+           },
+           methods: {
+               //每页显示的数据
+               handleSizeChange(val) {
+                   var likeThis = this;
+                   var pageSize = `${val}`;
+                   this.pageNo = 1
+                   this.pageSize = parseInt(pageSize);
+                   this.$nextTick(() =>
+                       GetPage(this)
+                   )
+               },
+               //点击下一页显示数据
+               handleCurrentChange(val) {
+                   var pageSize = this.pageSize;
+                  GetPage(this);
+               },
+               Save: function () {
+                   SaveInfo(this);
+               },
+               Update: function (row) {
+                   this.UserAdd = row;
+                   this.dialogFormVisible = true;
+               },
+               Delete: function (row) {
+                   alert(row.S_ID);
+                        axios.get('@Url.Action("Delete", "Person")', {
+                       params: { id: row.S_ID },
+                   })
+                       .then(function (response) {
+                           GetPage(this)
+                       })
+               }
+           },
+           mounted: function () {
+               var _this = this
+               GetPage(_this);
+               GetUnitList(_this)
+               GetRoleList(_this)
+               GetDutyList(_this);
+           }
+        })
+          //获取角色
+        function GetDutyList(_this) {
+            axios.get('@Url.Action("GetCateGoryByScope", "Person")?scope=user', {})
+                .then(function (response) {
+                    _this.dutyList = response.data
+                })
+        }
+        //获取角色
+        function GetRoleList(_this) {
+            axios.get('@Url.Action("GetRoleAll", "Person")', {})
+                .then(function (response) {
+                    console.log(response.data);
+                    _this.roleList = response.data
+                })
+        }
+        //获取单位
+        function GetUnitList(_this) {
+            axios.get('@Url.Action("GetUnitAll", "Person")', {})
+                .then(function (response) {
+                    _this.UnitList = response.data
+                })
+        }
+        //获取分页
+       function GetPage(_this) {
+           axios.get('@Url.Action("QueryList","Person")', {
+               params: {
+                   pageIndex: _this.pageNo,
+                   pageSize: _this.pageSize
+               },
+                }).then(function (response) {
+                    _this.totalDataNumber = response.data.Count;
+                    _this.tableData = response.data._PageList;
+
+               })
+        }
+        function SaveInfo(_this) {
+            var role = '';
+            if (_this.UserAdd.Role.length > 0) {
+                _this.UserAdd.Role.forEach(function (c) {
+                    role += c + ',';
+                })
+                role = role.substring(0, role.length - 1);
+            } else
+                role = _this.UserAdd.GetUUID;
+            _this.UserAdd.S_Id = GetUUID();
+            axios.get('@Url.Action("PersonAdd", "Person")', {
+                params: {
+                    person: JSON.stringify(_this.UserAdd),
+                    Role: role
+                }
+            })
+        }
+
+
+    </script>
+}
+<div id="app" style="padding:20px;padding-left:0px">
+    <el-row :gutter="10">
+        <el-col :md="4" :lg="2" style="padding:7px;">Name/姓名 </el-col>
+        <el-col :md="8" :lg="4"><el-input v-model="user.S_NAME" placeholder="Please enter name/请输入姓名"></el-input></el-col>
+        <el-col :md="4" :lg="2" style="padding:7px;">Phone/电话 </el-col>
+        <el-col :md="8" :lg="4"><el-input v-model="user.S_PHONE" placeholder="Please enter Phone/请输入电话"></el-input></el-col>
+        <el-col :md="4" :lg="2" style="padding:7px;">Unit/单位 </el-col>
+        @*<el-col :md="8" :lg="4">
+                <el-autocomplete class="inline-input" v-model="Unit" :fetch-suggestions="querySearch" placeholder="璇疯緭鍏ュ唴瀹¹" :trigger-on-focus="false" @@select="handleSelect"></el-autocomplete>
+            </el-col>*@
+        <el-col :md="8" :lg="2"><el-button type="success">Query</el-button></el-col>
+        <el-col :md="8" :lg="2"> <el-button type="info" @@click="dialogFormVisible = true">Save</el-button></el-col>
+
+    </el-row>
+    <hr />
+    <div id="TableDiv" style="padding:20px;padding-left:0px">
+        <el-table :data="tableData" border style="width: 100%;height:78%!important; overflow:hidden;overflow-y:auto">
+            <el-table-column prop="S_NAME" label=" 姓名"></el-table-column>
+            <el-table-column prop="S_POLICENUM" label="警号"> </el-table-column>
+            <el-table-column prop="S_UNITNAME" label="单位"> </el-table-column>
+            <el-table-column prop="S_SEX" label="性别"> </el-table-column>
+            <el-table-column prop="S_TEL" label="座机"></el-table-column>
+            <el-table-column prop="S_PHONE" label="电话"> </el-table-column>
+            <el-table-column prop="S_PHONE" label="电话"> </el-table-column>
+            <el-table-column fixed="right"
+                             label="操作"
+                             width="100">
+                <template slot-scope="scope">
+                    <el-button @@click="Update(scope.row)" type="text" size="small">Update</el-button>
+                    <el-button @@click="Delete(scope.row)" type="text" size="small">Delete</el-button>
+                </template>
+        </el-table>
+
+    </div>
+    <div id="fy" class="block" style="float:right">
+        <el-pagination class="pull-right clearfix"
+                       @@size-change="handleSizeChange"
+                       @@current-change="handleCurrentChange"
+                       :current-page.sync="pageNo"
+                       :page-sizes="pageSizesList"
+                       :page-size="pageSize"
+                       layout="total, sizes, prev, pager, next, jumper"
+                       :total="totalDataNumber">
+
+        </el-pagination>
+
+    </div>
+    <el-dialog title="添加人员" :visible.sync="dialogFormVisible">
+        <el-form :model="UserAdd">
+            <el-form-item label="警号" :label-width="formLabelWidth">
+                <el-input v-model="UserAdd.S_POLICENUM" auto-complete="off"></el-input>
+
+            </el-form-item>
+            <el-form-item label="姓名" :label-width="formLabelWidth">
+                <el-input v-model="UserAdd.S_NAME" auto-complete="off"></el-input>
+
+            </el-form-item>
+            <el-form-item label="密码" :label-width="formLabelWidth">
+                <el-input v-model="UserAdd.S_PASSWORD" auto-complete="off"></el-input>
+
+            </el-form-item>
+            <el-form-item label="单位" :label-width="formLabelWidth">
+                <el-select v-model="UserAdd.S_UNIT" filterable placeholder="请选择单位">
+                    <el-option v-for="item in UnitList" :key="item.S_ID" :label="item.S_DESCRIPTION" :value="item.S_ID">
+                    </el-option>
+                </el-select>
+
+            </el-form-item>
+            <el-form-item label="性别" :label-width="formLabelWidth">
+                <el-select v-model="UserAdd.S_SEX" placeholder="请选择性别">
+                    <el-option label="男" value="男"></el-option>
+                    <el-option label="女" value="女"></el-option>
+                    <el-option label="未知" value="未知"></el-option>
+
+                </el-select>
+
+            </el-form-item>
+            <el-form-item label="身份证号" :label-width="formLabelWidth">
+                <el-input v-model="UserAdd.S_IDENTIFICATION" auto-complete="off"></el-input>
+
+            </el-form-item>
+            <el-form-item label="座机" :label-width="formLabelWidth">
+                <el-input v-model="UserAdd.S_TEL" auto-complete="off"></el-input>
+
+            </el-form-item>
+            <el-form-item label="电话" :label-width="formLabelWidth">
+                <el-input v-model="UserAdd.S_PHONE" auto-complete="off"></el-input>
+
+            </el-form-item>
+            <el-form-item label="职务" :label-width="formLabelWidth">
+                <el-select v-model="UserAdd.S_DUTY" filterable placeholder="请选择职务">
+                    <el-option v-for="item in dutyList" :key="item.S_ID" :label="item.S_DESCRIPTION" :value="item.S_ID">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="角色" :label-width="formLabelWidth">
+                <el-select v-model="UserAdd.Role" filterable multiple placeholder="请选择角色">
+                    <el-option v-for="item in roleList" :key="item.S_ID" :label="item.S_NAME" :value="item.S_ID">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @@click="Save">保存</el-button>
+            <el-button type="primary" @@click="dialogFormVisible = false">取消</el-button>
+        </div>
+
+    </el-dialog>
+
+</div>
+

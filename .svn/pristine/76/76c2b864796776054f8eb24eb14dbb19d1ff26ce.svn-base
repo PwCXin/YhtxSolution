@@ -1,0 +1,127 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+
+@section link{
+    <style>
+        body {
+            margin: 0px;
+        }
+
+        /* 所有 */
+        #app {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 头 */
+        .header {
+            color: rgba(255,255,255,0.75);
+            line-height: 60px;
+            background-color: #24292e;
+            text-align: center;
+        }
+
+            .header div {
+                display: inline;
+            }
+
+        .title {
+        }
+
+        .author {
+            float: right;
+        }
+
+        .author-img {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* 内容区 */
+        .container {
+            min-height: 600px;
+            width: 100%;
+            height: 100%
+        }
+
+        /* 左边内容区 */
+        .left {
+            color: #4b595f;
+            width: 200px;
+        }
+
+            .left .totalUl {
+                height: 93%;
+            }
+
+        /* 右边内容区 */
+        .right {
+            min-width: 200px;
+        }
+
+        tbody {
+            font-size: 15px;
+            color: #4b595f;
+        }
+    </style>
+}
+@section scripts{
+    <script src="~/Scripts/commonUtils.js"></script>
+    <script type="text/javascript">
+        new Vue({
+            el: "#app",
+            data: {
+                activeIndex: "1",
+                aboutMeUrl: "@Url.Action("ToDo","Home")",
+                iframeUrl:  "@Url.Action("ToDo","Home")",
+                item: "",
+            },
+            methods: {
+
+                open: function (url) {
+                    var arr = url.split("^^");
+                    this.iframeUrl = arr[0];
+                    this.item = arr[1];
+                },
+                openGitHub() {
+                    window.open("https://github.com/yuleGH", "_blank");
+                }
+            }
+        });
+    </script>
+
+}
+<div id="app">
+    <el-container class="container">
+        <el-header class="header">
+            <div class="title">
+                <span>运维管理系统</span>
+            </div>
+            <div @@click="openGitHub" class="author">
+                <i class="el-icon-location-outline">yuleGH</i>
+                <img class="author-img" src="https://avatars2.githubusercontent.com/u/31040588?s=40&amp;v=4">
+            </div>
+        </el-header>
+
+        <el-container>
+            <el-aside class="left" style=" width:200px">
+                <el-menu :default-active="activeIndex" class="totalUl" style="background-color:#303133;">
+                    <el-menu-item index="1" @@click="open(aboutMeUrl)" style="color:white !important;"><i class="el-icon-service"></i>关于我</el-menu-item>
+                    <el-menu-item index="2" @@click="open('/Person/Query^^人员管理')" style="color:white !important;"><i class="el-icon-service"></i>人员管理</el-menu-item>
+            </el-aside>
+            <el-main class="right">
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+                    <el-breadcrumb-item><a href="/">{{item}}</a></el-breadcrumb-item>
+                </el-breadcrumb>
+                <hr />
+                <iframe style="width:100%; height:85%; border: 0;" :src="iframeUrl"></iframe>
+            </el-main>
+
+        </el-container>
+    </el-container>
+</div>
+
